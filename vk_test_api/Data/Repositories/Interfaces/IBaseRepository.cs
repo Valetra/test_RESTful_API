@@ -1,13 +1,15 @@
-﻿using vk_test_api.Data.Models.Base;
+﻿using vk_test_api.Data.Models;
+using vk_test_api.Data.Models.Base;
+using vk_test_api.Data.Repositories.Implimentations;
 
 namespace vk_test_api.Data.Repositories.Interfaces;
 
 public interface IBaseRepository<TDbModel> where TDbModel : BaseModel
 {
-    public List<TDbModel> GetAll();
-    public TDbModel Get(Guid id);
-    public IQueryable<TDbModel> Get();
-    public TDbModel Create(TDbModel model);
-    public TDbModel Update(TDbModel model);
-    public void Delete(Guid id);
+    List<TDbModel> GetAll();
+    TDbModel Get(Guid id);
+    IQueryable<TDbModel> Query();
+    TDbModel Create(TDbModel model);
+    TDbModel Update(TDbModel model);
+    void Delete(Guid id);
 }

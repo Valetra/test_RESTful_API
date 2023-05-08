@@ -7,6 +7,7 @@ using vk_test_api.Core.Services.Interfaces;
 using vk_test_api.Core.Mapper;
 using vk_test_api.Data.Models;
 using vk_test_api.Data.RequestObject;
+using Microsoft.AspNetCore.Authorization;
 
 namespace vk_test_api.Controllers;
 
@@ -22,12 +23,18 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<User>> GetAll()
+    [Route("states")]
+    public async Task<ActionResult<IEnumerable<UserState>>> GetAllStates()
     {
-        return _userService.GetAll().ToList();
+        var result = await _userService.GetAllStates();
+        return Ok(result);
     }
 
-
+    [HttpGet]
+    public ActionResult<IEnumerable<User>> GetAll()
+    {
+        return Ok(_userService.GetAll());
+    }
 
     [HttpGet("{id}")]
     public ActionResult<User> GetUser(Guid id)
@@ -39,13 +46,13 @@ public class UsersController : ControllerBase
             return NotFound();
         }
 
-        return user;
+        return Ok(user);
     }
 
     [HttpPost]
     public ActionResult<User> PostUser(PostUserObject user)
     {
-        var createdUser = _userService.Add(UserExtensions.ToUser(user));
+        var createdUser = _userService.Add(user);
         return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);
     }
 

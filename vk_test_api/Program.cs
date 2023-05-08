@@ -7,6 +7,7 @@ using vk_test_api.Core.Services.Interfaces;
 using vk_test_api.Data.Models;
 using vk_test_api.Data.Repositories.Implimentations;
 using vk_test_api.Data.Repositories.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,10 +29,18 @@ builder.Services.AddDbContext<UserContext>(options =>
 builder.Services.AddScoped<IBaseRepository<User>, BaseRepository<User>>();
 builder.Services.AddScoped<IBaseRepository<UserGroup>, BaseRepository<UserGroup>>();
 builder.Services.AddScoped<IBaseRepository<UserState>, BaseRepository<UserState>>();
+builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer> ();
 
 builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
+
+//Init db
+var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+var databaseInitializer = services.GetRequiredService<IDatabaseInitializer>();
+databaseInitializer.SeedAsync().Wait();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

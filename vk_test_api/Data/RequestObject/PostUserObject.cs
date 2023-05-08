@@ -6,6 +6,5 @@ public class PostUserObject
 
     public string PasswordHash { get; set; }
 
-    public string GroupCode { get; set; }
-    public string StateCode { get; set; }
+    public Guid GroupId { get; set; }
 }

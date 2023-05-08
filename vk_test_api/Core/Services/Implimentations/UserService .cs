@@ -1,49 +1,58 @@
 ﻿using System.Reflection.Metadata;
 using Microsoft.EntityFrameworkCore;
+using vk_test_api.Core.Mapper;
 using vk_test_api.Core.Services.Interfaces;
 using vk_test_api.Data.Models;
 using vk_test_api.Data.Repositories.Interfaces;
+using vk_test_api.Data.RequestObject;
 
 namespace vk_test_api.Core.Services.Implimentations;
 
 public class UserService : IUserService
 {
-    private readonly IBaseRepository<User> _users;
-    //private readonly IBaseRepository<UserGroup> _userGroups;
-    //private readonly IBaseRepository<UserState> _userStates;
+    private readonly IBaseRepository<User> _usersRepository;
+    private readonly IBaseRepository<UserGroup> _userGroupRepository;
+    private readonly IBaseRepository<UserState> _usersStateRepository;
 
-    public UserService(IBaseRepository<User> users)//IBaseRepository<UserGroup> userGroups, IBaseRepository<UserState> userStates
+    public UserService(IBaseRepository<User> usersRepository,IBaseRepository<UserGroup> userGroupRepository, IBaseRepository<UserState> usersStateRepository)
     {
-        _users = users;
-        //_userGroups = userGroups;
-        //_userStates = userStates;
+        _usersRepository = usersRepository;
+        _userGroupRepository = userGroupRepository;
+        _usersStateRepository = usersStateRepository;
     }
 
-    public IEnumerable<User> GetAll()
-    {
-        return _users.GetAll();
-    }
+    public async Task<IEnumerable<UserState>> GetAllStates() => await _usersStateRepository.Query().ToListAsync();
 
-    public User Get(Guid id) => _users.Get()
+    public IEnumerable<User> GetAll() => _usersRepository.Query()
         .Include(u => u.Group)
         .Include(u => u.State)
-        .FirstOrDefault(u => u.Id == id);
+        .ToList();
 
+    public async Task<User> Get(Guid id) => await _usersRepository.Query()
+        .Include(u => u.Group)
+        .Include(u => u.State)
+        .FirstOrDefaultAsync(u => u.Id == id);
 
-    public User Add(User user)
+    public User Add(PostUserObject user)
     {
-        user.DateCreated = DateTime.UtcNow;
-        user.State.Code = "Active";
-        user.State.Description = "description that you deserve";
+        var userEntity = UserExtensions.ToUser(user);
 
-        return _users.Create(user);
+        userEntity.DateCreated = DateTime.UtcNow;
+        userEntity.UserStateId = _usersStateRepository.Query().First(u => u.Code == "Active").Id;
+
+        return _usersRepository.Create(userEntity);
     }
+
     public void Update(User user)
     {
-        _users.Update(user);
+        _usersRepository.Update(user);
     }
+
     public void Delete(Guid id)
     {
-        _users.Delete(id);
+        var userEntity = _usersRepository.Query().First(u => u.Id == id);
+
+        userEntity.UserStateId = _usersStateRepository.Query().First(u => u.Code == "Blocked").Id;
+        Update(userEntity);
     }
 }

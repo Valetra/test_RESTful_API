@@ -1,6 +1,9 @@
 ﻿using vk_test_api.Data.Models.Base;
 using vk_test_api.Database;
 using vk_test_api.Data.Repositories.Interfaces;
+using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
+using vk_test_api.Data.Models;
 
 namespace vk_test_api.Data.Repositories.Implimentations;
 
@@ -48,8 +51,8 @@ public class BaseRepository<TDbModel> : IBaseRepository<TDbModel> where TDbModel
         return Context.Set<TDbModel>().FirstOrDefault(m => m.Id == id);
     }
 
-    public IQueryable<TDbModel> Get()
+    public IQueryable<TDbModel> Query()
     {
-        return Context.Set<TDbModel>();
+        return Context.Set<TDbModel>();//AsNoTracking()
     }
 }

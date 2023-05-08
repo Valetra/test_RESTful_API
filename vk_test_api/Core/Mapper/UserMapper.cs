@@ -1,6 +1,7 @@
 ﻿using vk_test_api.Data.Models;
 using vk_test_api.Data.RequestObject;
 using vk_test_api.Data.Models;
+using System.Text.RegularExpressions;
 
 namespace vk_test_api.Core.Mapper;
 
@@ -12,8 +13,7 @@ public static class UserExtensions
 
         PasswordHash = $"{newUser.PasswordHash}",
 
-        Group = new UserGroup { Code = newUser.GroupCode, Description = "default" },
+        UserGroupId = newUser.GroupId
 
-        State = new UserState { Code = newUser.StateCode, Description = "default" }
     };
 }

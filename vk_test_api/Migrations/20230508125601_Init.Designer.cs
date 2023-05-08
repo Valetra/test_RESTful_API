@@ -12,7 +12,7 @@ using vk_test_api.Database;
 namespace vk_test_api.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20230507172602_Init")]
+    [Migration("20230508125601_Init")]
     partial class Init
     {
         /// <inheritdoc />

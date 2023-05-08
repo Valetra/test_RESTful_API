@@ -18,5 +18,5 @@ public class User : BaseModel
 
     public Guid UserStateId { get; set; }
     [ForeignKey("UserStateId")]
-    public UserState State { get; set; }
+    public virtual UserState State { get; set; }
 }
