@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Reflection.Metadata;
 using vk_test_api.Data.Models;
 
 namespace vk_test_api.Database;

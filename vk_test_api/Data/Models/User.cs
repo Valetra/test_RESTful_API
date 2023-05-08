@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using vk_test_api.Data.Models.Base;
 

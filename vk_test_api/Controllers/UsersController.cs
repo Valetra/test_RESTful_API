@@ -1,14 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata;
-using vk_test_api.Data.Repositories.Interfaces;
-using Microsoft.AspNetCore.Components.Routing;
 using vk_test_api.Core.Services.Interfaces;
 using vk_test_api.Core.Mapper;
 using vk_test_api.Data.Models;
 using vk_test_api.Data.RequestObject;
-using Microsoft.AspNetCore.Authorization;
-using System.Linq.Expressions;
 using vk_test_api.Core.Exceptions;
 
 namespace vk_test_api.Controllers;

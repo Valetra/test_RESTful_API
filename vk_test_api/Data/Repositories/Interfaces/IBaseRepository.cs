@@ -1,6 +1,5 @@
 ﻿using vk_test_api.Data.Models;
 using vk_test_api.Data.Models.Base;
-using vk_test_api.Data.Repositories.Implimentations;
 
 namespace vk_test_api.Data.Repositories.Interfaces;
 

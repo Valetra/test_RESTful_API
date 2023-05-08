@@ -1,12 +1,9 @@
-﻿using System.Reflection.Metadata;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using vk_test_api.Core.Mapper;
 using vk_test_api.Core.Services.Interfaces;
 using vk_test_api.Data.Models;
 using vk_test_api.Data.Repositories.Interfaces;
 using vk_test_api.Data.RequestObject;
-using System.Threading.Tasks;
-using vk_test_api.Migrations;
 using vk_test_api.Core.Exceptions;
 
 namespace vk_test_api.Core.Services.Implimentations;
