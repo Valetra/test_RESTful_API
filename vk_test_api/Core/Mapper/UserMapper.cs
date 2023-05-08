@@ -14,6 +14,5 @@ public static class UserExtensions
         PasswordHash = $"{newUser.PasswordHash}",
 
         UserGroupId = newUser.GroupId
-
     };
 }

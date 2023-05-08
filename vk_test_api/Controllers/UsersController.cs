@@ -23,14 +23,6 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    [Route("states")]
-    public async Task<ActionResult<IEnumerable<UserState>>> GetAllStates()
-    {
-        var result = await _userService.GetAllStates();
-        return Ok(result);
-    }
-
-    [HttpGet]
     public ActionResult<IEnumerable<User>> GetAll()
     {
         return Ok(_userService.GetAll());

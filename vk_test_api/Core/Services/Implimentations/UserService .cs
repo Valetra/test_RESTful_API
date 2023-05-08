@@ -5,6 +5,8 @@ using vk_test_api.Core.Services.Interfaces;
 using vk_test_api.Data.Models;
 using vk_test_api.Data.Repositories.Interfaces;
 using vk_test_api.Data.RequestObject;
+using System.Threading.Tasks;
+using vk_test_api.Migrations;
 
 namespace vk_test_api.Core.Services.Implimentations;
 
@@ -20,8 +22,6 @@ public class UserService : IUserService
         _userGroupRepository = userGroupRepository;
         _usersStateRepository = usersStateRepository;
     }
-
-    public async Task<IEnumerable<UserState>> GetAllStates() => await _usersStateRepository.Query().ToListAsync();
 
     public IEnumerable<User> GetAll() => _usersRepository.Query()
         .Include(u => u.Group)
@@ -47,9 +47,11 @@ public class UserService : IUserService
             return (false, null); 
         }
         //}
+        
         userEntity.DateCreated = DateTime.UtcNow;
         userEntity.UserStateId = _usersStateRepository.Query().First(u => u.Code == "Active").Id;
 
+        //FiveSecounsTimer
         return (true, userEntity);
     }
 

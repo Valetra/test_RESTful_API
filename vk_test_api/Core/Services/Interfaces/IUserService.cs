@@ -4,7 +4,6 @@ using vk_test_api.Data.RequestObject;
 namespace vk_test_api.Core.Services.Interfaces;
 public interface IUserService
 {
-    Task<IEnumerable<UserState>> GetAllStates();
     IEnumerable<User> GetAll();
     Task<User> Get(Guid id);
 
