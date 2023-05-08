@@ -15,44 +15,45 @@ public class BaseRepository<TDbModel> : IBaseRepository<TDbModel> where TDbModel
         Context = context;
     }
 
-    public TDbModel Create(TDbModel model)
+    public async Task<TDbModel> Create(TDbModel model)
     {
-        Context.Set<TDbModel>().Add(model);
-        Context.SaveChanges();
+        await Context.Set<TDbModel>().AddAsync(model);
+        await Context.SaveChangesAsync();
         return model;
     }
 
-    public void Delete(Guid id)
+    public async Task Delete(Guid id)
     {
-        var toDelete = Context.Set<TDbModel>().FirstOrDefault(m => m.Id == id);
+        var toDelete = await Query().FirstOrDefaultAsync(m => m.Id == id);
         Context.Set<TDbModel>().Remove(toDelete);
-        Context.SaveChanges();
+        await Context.SaveChangesAsync();
     }
 
-    public List<TDbModel> GetAll()
+    public async Task<List<TDbModel>> GetAll()
     {
-        return Context.Set<TDbModel>().ToList();
+        return await Query().ToListAsync();
     }
 
-    public TDbModel Update(TDbModel model)
+    public async Task<TDbModel> Update(TDbModel model)
     {
-        var toUpdate = Context.Set<TDbModel>().FirstOrDefault(m => m.Id == model.Id);
+        var toUpdate = await Query().FirstOrDefaultAsync(m => m.Id == model.Id);
         if (toUpdate != null)
         {
             toUpdate = model;
         }
+
         Context.Update(toUpdate);
-        Context.SaveChanges();
+        await Context.SaveChangesAsync();
         return toUpdate;
     }
 
-    public TDbModel Get(Guid id)
+    public async Task<TDbModel> Get(Guid id)
     {
-        return Context.Set<TDbModel>().FirstOrDefault(m => m.Id == id);
+        return await Query().FirstOrDefaultAsync(m => m.Id == id);
     }
 
     public IQueryable<TDbModel> Query()
     {
-        return Context.Set<TDbModel>();//AsNoTracking()
+        return Context.Set<TDbModel>();
     }
 }

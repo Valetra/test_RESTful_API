@@ -24,23 +24,23 @@ public class UserService : IUserService
         _usersStateRepository = usersStateRepository;
     }
 
-    public IEnumerable<User> GetAll() => _usersRepository.Query()
+    public async Task<IEnumerable<User>> GetAll() => await _usersRepository.Query()
         .Include(u => u.Group)
         .Include(u => u.State)
-        .ToList();
+        .ToListAsync();
 
     public async Task<User> Get(Guid id) => await _usersRepository.Query()
         .Include(u => u.Group)
         .Include(u => u.State)
         .FirstOrDefaultAsync(u => u.Id == id);
 
-    public User Add(PostUserObject user)
+    public async Task<User> Add(PostUserObject user)
     {
         var userEntity = UserExtensions.ToUser(user);
 
         if (user.GroupCode == "Admin")
         {
-            bool hasAnyAdmin = _usersRepository.Query().Any(u => u.Group.Code == "Admin");
+            bool hasAnyAdmin = await _usersRepository.Query().AnyAsync(u => u.Group.Code == "Admin");
 
             if (hasAnyAdmin)
             {
@@ -49,23 +49,23 @@ public class UserService : IUserService
         }
 
         userEntity.DateCreated = DateTime.UtcNow;
-        userEntity.UserStateId = _usersStateRepository.Query().First(u => u.Code == "Active").Id;
-        userEntity.UserGroupId = _userGroupRepository.Query().First(u => u.Code == user.GroupCode).Id;
+        userEntity.State = await _usersStateRepository.Query().FirstAsync(u => u.Code == "Active");
+        userEntity.Group = await _userGroupRepository.Query().FirstAsync(u => u.Code == user.GroupCode);
         //FiveSecounsTimer
 
-        return _usersRepository.Create(userEntity);
+        return await _usersRepository.Create(userEntity);
     }
 
-    public void Update(User user)
+    public async Task<User> Update(User user)
     {
-        _usersRepository.Update(user);
+        return await _usersRepository.Update(user);
     }
 
-    public void Delete(Guid id)
+    public async Task Delete(Guid id)
     {
-        var userEntity = _usersRepository.Query().First(u => u.Id == id);
+        var userEntity = await _usersRepository.Query().FirstAsync(u => u.Id == id);
 
-        userEntity.UserStateId = _usersStateRepository.Query().First(u => u.Code == "Blocked").Id;
-        Update(userEntity);
+        userEntity.State = await _usersStateRepository.Query().FirstAsync(u => u.Code == "Blocked");
+        await Update(userEntity);
     }
 }

@@ -25,9 +25,9 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<User>> GetAll()
+    public async Task<ActionResult<IEnumerable<User>>> GetAll()
     {
-        return Ok(_userService.GetAll());
+        return Ok(await _userService.GetAll());
     }
 
     [HttpGet("{id}")]
@@ -44,13 +44,13 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult<User> PostUser(PostUserObject user)
+    public async Task<ActionResult<User>> PostUser(PostUserObject user)
     {
         User newUser;
 
         try
         {
-            newUser = _userService.Add(user);
+            newUser = await _userService.Add(user);
         }
         catch (AdminAlreadyExistsException)
         {
@@ -61,9 +61,9 @@ public class UsersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public IActionResult DeleteUser(Guid id)
+    public async Task<IActionResult> DeleteUser(Guid id)
     {
-        _userService.Delete(id);
+        await _userService.Delete(id);
         return NoContent();
     }
 }

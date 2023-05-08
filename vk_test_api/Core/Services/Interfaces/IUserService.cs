@@ -4,10 +4,10 @@ using vk_test_api.Data.RequestObject;
 namespace vk_test_api.Core.Services.Interfaces;
 public interface IUserService
 {
-    IEnumerable<User> GetAll();
+    Task<IEnumerable<User>> GetAll();
     Task<User> Get(Guid id);
 
-    User Add(PostUserObject user);
+    Task<User> Add(PostUserObject user);
 
-    void Delete(Guid id);
+    Task Delete(Guid id);
 }
