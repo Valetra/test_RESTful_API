@@ -52,8 +52,11 @@ public class UsersController : ControllerBase
     [HttpPost]
     public ActionResult<User> PostUser(PostUserObject user)
     {
-        var createdUser = _userService.Add(user);
-        return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);
+        var (isSucces, newUser) = _userService.Add(user);
+
+        if (!isSucces)
+            return BadRequest("Service is already have an Admin!");
+        return CreatedAtAction(nameof(GetUser), new { id = newUser.Id }, newUser);
     }
 
     [HttpDelete("{id}")]

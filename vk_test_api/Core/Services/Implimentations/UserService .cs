@@ -33,14 +33,24 @@ public class UserService : IUserService
         .Include(u => u.State)
         .FirstOrDefaultAsync(u => u.Id == id);
 
-    public User Add(PostUserObject user)
+    public (bool, User?) Add(PostUserObject user)
     {
         var userEntity = UserExtensions.ToUser(user);
 
+        //IsAdminOnBoard
+        //{
+        var adminRoleId = _userGroupRepository.Query().First(u => u.Code == "Admin").Id;
+        bool isAdminEntity = _usersRepository.Query().Any(u => u.UserGroupId == adminRoleId);
+
+        if (isAdminEntity && userEntity.UserGroupId == adminRoleId)
+        {
+            return (false, null); 
+        }
+        //}
         userEntity.DateCreated = DateTime.UtcNow;
         userEntity.UserStateId = _usersStateRepository.Query().First(u => u.Code == "Active").Id;
 
-        return _usersRepository.Create(userEntity);
+        return (true, userEntity);
     }
 
     public void Update(User user)

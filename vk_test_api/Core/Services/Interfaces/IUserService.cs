@@ -8,7 +8,7 @@ public interface IUserService
     IEnumerable<User> GetAll();
     Task<User> Get(Guid id);
 
-    User Add(PostUserObject user);
+    (bool, User?) Add(PostUserObject user);
 
     void Delete(Guid id);
 }
