@@ -8,6 +8,8 @@ using vk_test_api.Core.Mapper;
 using vk_test_api.Data.Models;
 using vk_test_api.Data.RequestObject;
 using Microsoft.AspNetCore.Authorization;
+using System.Linq.Expressions;
+using vk_test_api.Core.Exceptions;
 
 namespace vk_test_api.Controllers;
 
@@ -29,9 +31,9 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public ActionResult<User> GetUser(Guid id)
+    public async Task<ActionResult<User>> GetUser(Guid id)
     {
-        var user = _userService.Get(id);
+        var user = await _userService.Get(id);
 
         if (user == null)
         {
@@ -44,10 +46,17 @@ public class UsersController : ControllerBase
     [HttpPost]
     public ActionResult<User> PostUser(PostUserObject user)
     {
-        var (isSucces, newUser) = _userService.Add(user);
+        User newUser;
 
-        if (!isSucces)
-            return BadRequest("Service is already have an Admin!");
+        try
+        {
+            newUser = _userService.Add(user);
+        }
+        catch (AdminAlreadyExistsException)
+        {
+            return BadRequest("Service is already has an Admin!");
+        }
+
         return CreatedAtAction(nameof(GetUser), new { id = newUser.Id }, newUser);
     }
 

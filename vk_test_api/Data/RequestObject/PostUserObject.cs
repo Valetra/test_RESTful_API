@@ -4,7 +4,7 @@ public class PostUserObject
 {
     public string Login { get; set; }
 
-    public string PasswordHash { get; set; }
+    public string Password { get; set; }
 
-    public Guid GroupId { get; set; }
+    public string GroupCode { get; set; }
 }

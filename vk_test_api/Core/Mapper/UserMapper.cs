@@ -9,10 +9,8 @@ public static class UserExtensions
 {
     public static User ToUser(this PostUserObject newUser) => new User
     {
-        Login = $"{newUser.Login}",
+        Login = newUser.Login,
 
-        PasswordHash = $"{newUser.PasswordHash}",
-
-        UserGroupId = newUser.GroupId
+        Password = newUser.Password
     };
 }

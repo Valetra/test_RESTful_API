@@ -7,6 +7,7 @@ using vk_test_api.Data.Repositories.Interfaces;
 using vk_test_api.Data.RequestObject;
 using System.Threading.Tasks;
 using vk_test_api.Migrations;
+using vk_test_api.Core.Exceptions;
 
 namespace vk_test_api.Core.Services.Implimentations;
 
@@ -33,26 +34,26 @@ public class UserService : IUserService
         .Include(u => u.State)
         .FirstOrDefaultAsync(u => u.Id == id);
 
-    public (bool, User?) Add(PostUserObject user)
+    public User Add(PostUserObject user)
     {
         var userEntity = UserExtensions.ToUser(user);
 
-        //IsAdminOnBoard
-        //{
-        var adminRoleId = _userGroupRepository.Query().First(u => u.Code == "Admin").Id;
-        bool isAdminEntity = _usersRepository.Query().Any(u => u.UserGroupId == adminRoleId);
-
-        if (isAdminEntity && userEntity.UserGroupId == adminRoleId)
+        if (user.GroupCode == "Admin")
         {
-            return (false, null); 
+            bool hasAnyAdmin = _usersRepository.Query().Any(u => u.Group.Code == "Admin");
+
+            if (hasAnyAdmin)
+            {
+                throw new AdminAlreadyExistsException();
+            }
         }
-        //}
-        
+
         userEntity.DateCreated = DateTime.UtcNow;
         userEntity.UserStateId = _usersStateRepository.Query().First(u => u.Code == "Active").Id;
-
+        userEntity.UserGroupId = _userGroupRepository.Query().First(u => u.Code == user.GroupCode).Id;
         //FiveSecounsTimer
-        return (true, userEntity);
+
+        return _usersRepository.Create(userEntity);
     }
 
     public void Update(User user)
