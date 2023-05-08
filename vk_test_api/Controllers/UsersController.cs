@@ -48,7 +48,15 @@ public class UsersController : ControllerBase
         }
         catch (AdminAlreadyExistsException)
         {
-            return BadRequest("Service is already has an Admin!");
+            return BadRequest("Service is already has an Admin.");
+        }
+        catch (UserIsCreatingException)
+        {
+            return BadRequest("User with this login is creating right now.");
+        }
+        catch(LoginExistsException)
+        {
+            return BadRequest("User with this login is already exicts.");
         }
 
         return CreatedAtAction(nameof(GetUser), new { id = newUser.Id }, newUser);

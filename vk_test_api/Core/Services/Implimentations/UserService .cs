@@ -14,6 +14,7 @@ public class UserService : IUserService
     private readonly IBaseRepository<UserGroup> _userGroupRepository;
     private readonly IBaseRepository<UserState> _usersStateRepository;
 
+    private static readonly ISet<string> creatingLogins = new HashSet<string>();
     public UserService(IBaseRepository<User> usersRepository,IBaseRepository<UserGroup> userGroupRepository, IBaseRepository<UserState> usersStateRepository)
     {
         _usersRepository = usersRepository;
@@ -33,6 +34,11 @@ public class UserService : IUserService
 
     public async Task<User> Add(PostUserObject user)
     {
+        if (creatingLogins.Contains(user.Login))
+            throw new UserIsCreatingException();
+
+        creatingLogins.Add(user.Login);
+
         var userEntity = UserExtensions.ToUser(user);
 
         if (user.GroupCode == "Admin")
@@ -48,9 +54,19 @@ public class UserService : IUserService
         userEntity.DateCreated = DateTime.UtcNow;
         userEntity.State = await _usersStateRepository.Query().FirstAsync(u => u.Code == "Active");
         userEntity.Group = await _userGroupRepository.Query().FirstAsync(u => u.Code == user.GroupCode);
-        //FiveSecounsTimer
 
-        return await _usersRepository.Create(userEntity);
+
+        await Task.Delay(TimeSpan.FromSeconds(5));
+        creatingLogins.Remove(user.Login);
+
+        try
+        {
+            return await _usersRepository.Create(userEntity);
+        }
+        catch(DbUpdateException)
+        {
+            throw new LoginExistsException();
+        }
     }
 
     public async Task<User> Update(User user)
