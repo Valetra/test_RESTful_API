@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using vk_test_api.Core.Services.Interfaces;
-using vk_test_api.Core.Mapper;
 using vk_test_api.Data.Models;
 using vk_test_api.Data.RequestObject;
 using vk_test_api.Core.Exceptions;
+using vk_test_api.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace vk_test_api.Controllers;
 
+[UserAuthorize]
 [ApiController]
 [Route("[controller]")]
 public class UsersController : ControllerBase
@@ -37,6 +39,7 @@ public class UsersController : ControllerBase
         return Ok(user);
     }
 
+    [AllowAnonymous]
     [HttpPost]
     public async Task<ActionResult<User>> PostUser(PostUserObject user)
     {
@@ -54,7 +57,7 @@ public class UsersController : ControllerBase
         {
             return BadRequest("User with this login is creating right now.");
         }
-        catch(LoginExistsException)
+        catch (LoginExistsException)
         {
             return BadRequest("User with this login is already exicts.");
         }

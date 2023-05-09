@@ -15,7 +15,7 @@ public class UserService : IUserService
     private readonly IBaseRepository<UserState> _usersStateRepository;
 
     private static readonly ISet<string> creatingLogins = new HashSet<string>();
-    public UserService(IBaseRepository<User> usersRepository,IBaseRepository<UserGroup> userGroupRepository, IBaseRepository<UserState> usersStateRepository)
+    public UserService(IBaseRepository<User> usersRepository, IBaseRepository<UserGroup> userGroupRepository, IBaseRepository<UserState> usersStateRepository)
     {
         _usersRepository = usersRepository;
         _userGroupRepository = userGroupRepository;
@@ -63,7 +63,7 @@ public class UserService : IUserService
         {
             return await _usersRepository.Create(userEntity);
         }
-        catch(DbUpdateException)
+        catch (DbUpdateException)
         {
             throw new LoginExistsException();
         }
@@ -80,5 +80,10 @@ public class UserService : IUserService
 
         userEntity.State = await _usersStateRepository.Query().FirstAsync(u => u.Code == "Blocked");
         await Update(userEntity);
+    }
+
+    public async Task<User> Authenticate(string username, string password)
+    {
+        return await _usersRepository.Query().SingleOrDefaultAsync(x => x.Login == username && x.Password == password);
     }
 }

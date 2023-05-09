@@ -10,4 +10,6 @@ public interface IUserService
     Task<User> Add(PostUserObject user);
 
     Task Delete(Guid id);
+
+    Task<User> Authenticate(string username, string password);
 }

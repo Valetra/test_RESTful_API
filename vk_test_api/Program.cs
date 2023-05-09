@@ -1,20 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using vk_test_api.Database;
-using vk_test_api.Data.Models.Base;
 using System.Text.Json.Serialization;
 using vk_test_api.Core.Services.Implimentations;
 using vk_test_api.Core.Services.Interfaces;
 using vk_test_api.Data.Models;
 using vk_test_api.Data.Repositories.Implimentations;
 using vk_test_api.Data.Repositories.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
+using vk_test_api.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -52,6 +49,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<BasicAuthMiddleware>();
 
 app.MapControllers();
 
