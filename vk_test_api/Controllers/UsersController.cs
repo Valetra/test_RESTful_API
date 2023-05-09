@@ -21,9 +21,9 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetAll()
+    public async Task<ActionResult<UserPaginatedResponse>> GetAll([FromQuery] UserParametrs userParametrs)
     {
-        return Ok(await _userService.GetAll());
+        return Ok(await _userService.GetUsers(userParametrs));
     }
 
     [HttpGet("{id}")]

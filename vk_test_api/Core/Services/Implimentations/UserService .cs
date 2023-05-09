@@ -86,4 +86,19 @@ public class UserService : IUserService
     {
         return await _usersRepository.Query().SingleOrDefaultAsync(x => x.Login == username && x.Password == password);
     }
+
+    public async Task<UserPaginatedResponse> GetUsers(UserParametrs userParameters)
+    {
+        return new UserPaginatedResponse()
+        {
+            TotalCount = await _usersRepository.Query().CountAsync(),
+            Users = await _usersRepository.Query()
+            .OrderBy(on => on.Login)
+            .Skip((userParameters.PageNumber - 1) * userParameters.PageSize)
+            .Take(userParameters.PageSize)
+            .Include(u => u.Group)
+            .Include(u => u.State)
+            .ToListAsync()
+        };
+    }
 }
