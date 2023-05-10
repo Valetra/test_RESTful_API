@@ -1,5 +1,7 @@
 logfile
-
+.gitattributes
+.editorconfig
+Migrations
 *.swp
 *.*~
 project.lock.json
