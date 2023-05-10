@@ -2,7 +2,6 @@
 
 namespace vk_test_api.Data.Models;
 
-
 public class UserGroup : BaseModel
 {
     public string Code { get; set; }

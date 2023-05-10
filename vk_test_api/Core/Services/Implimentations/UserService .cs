@@ -5,9 +5,10 @@ using vk_test_api.Data.Models;
 using vk_test_api.Data.Repositories.Interfaces;
 using vk_test_api.Data.RequestObject;
 using vk_test_api.Core.Exceptions;
+using System.Buffers.Text;
+using System.Text;
 
 namespace vk_test_api.Core.Services.Implimentations;
-
 public class UserService : IUserService
 {
     private readonly IUserRepository _usersRepository;
@@ -36,7 +37,6 @@ public class UserService : IUserService
 
         if (user.GroupCode == "Admin")
         {
-
             if (await _usersRepository.IsAdminExist())
             {
                 throw new AdminAlreadyExistsException();

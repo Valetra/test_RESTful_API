@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using vk_test_api.Data;
@@ -10,10 +11,12 @@ using vk_test_api.Data;
 
 namespace vk_test_api.Migrations
 {
-    [DbContext(typeof(Data.AppDbContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(AppDbContext))]
+    [Migration("20230510160800_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,14 +38,14 @@ namespace vk_test_api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("UserGroupId")
+                    b.Property<Guid>("User_Group_Id")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("UserStateId")
+                    b.Property<Guid>("User_State_Id")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -50,14 +53,14 @@ namespace vk_test_api.Migrations
                     b.HasIndex("Login")
                         .IsUnique();
 
-                    b.HasIndex("UserGroupId");
+                    b.HasIndex("User_Group_Id");
 
-                    b.HasIndex("UserStateId");
+                    b.HasIndex("User_State_Id");
 
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("vk_test_api.Data.Models.UserGroup", b =>
+            modelBuilder.Entity("vk_test_api.Data.Models.User_Group", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -76,7 +79,7 @@ namespace vk_test_api.Migrations
                     b.ToTable("UserGroups");
                 });
 
-            modelBuilder.Entity("vk_test_api.Data.Models.UserState", b =>
+            modelBuilder.Entity("vk_test_api.Data.Models.User_State", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -97,15 +100,15 @@ namespace vk_test_api.Migrations
 
             modelBuilder.Entity("vk_test_api.Data.Models.User", b =>
                 {
-                    b.HasOne("vk_test_api.Data.Models.UserGroup", "Group")
+                    b.HasOne("vk_test_api.Data.Models.User_Group", "Group")
                         .WithMany()
-                        .HasForeignKey("UserGroupId")
+                        .HasForeignKey("User_Group_Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("vk_test_api.Data.Models.UserState", "State")
+                    b.HasOne("vk_test_api.Data.Models.User_State", "State")
                         .WithMany()
-                        .HasForeignKey("UserStateId")
+                        .HasForeignKey("User_State_Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

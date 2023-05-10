@@ -20,9 +20,8 @@ public class UsersController : ControllerBase
         _userService = userService;
     }
 
-
     [HttpGet]
-    //?pageNumber=x&pageSize=y for pagination
+    //For pagination use this: https://localhost/users?pageNumber=x&pageSize=y 
     public async Task<ActionResult<UserPaginatedResponse>> GetAll([FromQuery] UserParametrs userParametrs)
     {
         return Ok(await _userService.GetUsers(userParametrs));

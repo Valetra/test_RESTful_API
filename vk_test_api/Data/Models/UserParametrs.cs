@@ -1,5 +1,4 @@
 ﻿namespace vk_test_api.Data.Models;
-
 public class UserParametrs
 {
     const int maxPageSize = 50;

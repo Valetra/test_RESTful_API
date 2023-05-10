@@ -1,8 +1,6 @@
 ﻿using vk_test_api.Data.Models.Base;
-using vk_test_api.Data;
 using vk_test_api.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using vk_test_api.Data.Models;
 
 namespace vk_test_api.Data.Repositories.Implimentations;
 
@@ -41,7 +39,6 @@ public class BaseRepository<TDbModel> : IBaseRepository<TDbModel> where TDbModel
         {
             toUpdate = model;
         }
-
         Context.Update(toUpdate);
         await Context.SaveChangesAsync();
         return toUpdate;

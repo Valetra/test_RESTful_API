@@ -11,13 +11,13 @@ public class User : BaseModel
 
     public DateTime DateCreated { get; set; }
 
-    public string Password { get; set; }
+    public string PasswordHash { get; set; }
 
-    public Guid UserGroupId { get; set; }
-    [ForeignKey("UserGroupId")]
+    public Guid User_Group_Id { get; set; }
+    [ForeignKey("User_Group_Id")]
     public virtual UserGroup Group { get; set; }
 
-    public Guid UserStateId { get; set; }
-    [ForeignKey("UserStateId")]
+    public Guid User_State_Id { get; set; }
+    [ForeignKey("User_State_Id")]
     public virtual UserState State { get; set; }
 }

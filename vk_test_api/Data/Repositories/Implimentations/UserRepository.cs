@@ -58,7 +58,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
     }
     public async Task<User> GetUser(string username, string password)
     {
-        return await _context.Users.SingleOrDefaultAsync(x => x.Login == username && x.Password == password);
+        return await _context.Users.SingleOrDefaultAsync(x => x.Login == username && x.PasswordHash == password);
     }
 
     public async Task<UserPaginatedResponse> GetUsers(UserParametrs userParameters)

@@ -23,18 +23,18 @@ public class DatabaseInitializer : IDatabaseInitializer
     }
     private async Task SeedDefaultGroupsAsync()
     {
-        if (!await _context.UserGroups.AnyAsync())
+        if (!await _context.User_Groups.AnyAsync())
         {
-            _context.UserGroups.Add(new UserGroup { Code = "Admin", Description = "Who is your daddy?!" });
-            _context.UserGroups.Add(new UserGroup { Code = "User", Description = "Who is my daddy?" });
+            _context.User_Groups.Add(new UserGroup { Code = "Admin", Description = "This is default description" });
+            _context.User_Groups.Add(new UserGroup { Code = "User", Description = "This is default description" });
         }
     }
     private async Task SeedDefaultStatesAsync()
     {
-        if (!await _context.UserStates.AnyAsync())
+        if (!await _context.User_States.AnyAsync())
         {
-            _context.UserStates.Add(new UserState { Code = "Active", Description = "Where do you prefer more: from the top/bottom?" });
-            _context.UserStates.Add(new UserState { Code = "Blocked", Description = "I`d like to on the bottom!" });
+            _context.User_States.Add(new UserState { Code = "Active", Description = "This is default description" });
+            _context.User_States.Add(new UserState { Code = "Blocked", Description = "This is default description" });
         }
     }
 }

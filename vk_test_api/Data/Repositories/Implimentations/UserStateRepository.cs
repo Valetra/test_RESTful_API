@@ -12,7 +12,7 @@ public class UserStateRepository : BaseRepository<UserState>, IUserStateReposito
 
     public async Task<UserState> GetState(string state)
     {
-        return await _context.UserStates.FirstAsync(u => u.Code == state);
+        return await _context.User_States.FirstAsync(u => u.Code == state);
     }
 
     private AppDbContext _context => (AppDbContext)Context;

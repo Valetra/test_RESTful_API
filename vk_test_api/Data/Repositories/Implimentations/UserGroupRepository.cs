@@ -12,7 +12,7 @@ public class UserGroupRepository : BaseRepository<UserGroup>, IUserGroupReposito
 
     public async Task<UserGroup> GetUserGroup(string userGroup)
     {
-        return await _context.UserGroups.FirstAsync(u => u.Code == userGroup);
+        return await _context.User_Groups.FirstAsync(u => u.Code == userGroup);
     }
 
     private AppDbContext _context => (AppDbContext)Context;
