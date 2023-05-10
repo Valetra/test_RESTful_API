@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using vk_test_api.Database;
+using vk_test_api.Data;
 
 #nullable disable
 
 namespace vk_test_api.Migrations
 {
-    [DbContext(typeof(UserContext))]
+    [DbContext(typeof(Data.AppDbContext))]
     [Migration("20230508200247_Three")]
     partial class Three
     {

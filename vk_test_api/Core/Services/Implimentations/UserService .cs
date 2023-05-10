@@ -10,27 +10,20 @@ namespace vk_test_api.Core.Services.Implimentations;
 
 public class UserService : IUserService
 {
-    private readonly IBaseRepository<User> _usersRepository;
-    private readonly IBaseRepository<UserGroup> _userGroupRepository;
-    private readonly IBaseRepository<UserState> _usersStateRepository;
+    private readonly IUserRepository _usersRepository;
+    private readonly IUserStateRepository _userStateRepository;
+    private readonly IUserGroupRepository _userGroupRepository;
 
     private static readonly ISet<string> creatingLogins = new HashSet<string>();
-    public UserService(IBaseRepository<User> usersRepository, IBaseRepository<UserGroup> userGroupRepository, IBaseRepository<UserState> usersStateRepository)
+    public UserService(IUserRepository usersRepository, IUserStateRepository userStateRepository, IUserGroupRepository userGroupRepository)
     {
         _usersRepository = usersRepository;
+        _userStateRepository = userStateRepository;
         _userGroupRepository = userGroupRepository;
-        _usersStateRepository = usersStateRepository;
     }
 
-    public async Task<IEnumerable<User>> GetAll() => await _usersRepository.Query()
-        .Include(u => u.Group)
-        .Include(u => u.State)
-        .ToListAsync();
-
-    public async Task<User> Get(Guid id) => await _usersRepository.Query()
-        .Include(u => u.Group)
-        .Include(u => u.State)
-        .FirstOrDefaultAsync(u => u.Id == id);
+    public async Task<IEnumerable<User>> GetAll() => await _usersRepository.GetAll();
+    public async Task<User> Get(Guid id) => await _usersRepository.Get(id);
 
     public async Task<User> Add(PostUserObject user)
     {
@@ -43,18 +36,16 @@ public class UserService : IUserService
 
         if (user.GroupCode == "Admin")
         {
-            bool hasAnyAdmin = await _usersRepository.Query().AnyAsync(u => u.Group.Code == "Admin");
 
-            if (hasAnyAdmin)
+            if (await _usersRepository.IsAdminExist())
             {
                 throw new AdminAlreadyExistsException();
             }
         }
 
         userEntity.DateCreated = DateTime.UtcNow;
-        userEntity.State = await _usersStateRepository.Query().FirstAsync(u => u.Code == "Active");
-        userEntity.Group = await _userGroupRepository.Query().FirstAsync(u => u.Code == user.GroupCode);
-
+        userEntity.State = await _userStateRepository.GetState("Active");
+        userEntity.Group = await _userGroupRepository.GetUserGroup(user.GroupCode);
 
         await Task.Delay(TimeSpan.FromSeconds(5));
         creatingLogins.Remove(user.Login);
@@ -76,29 +67,19 @@ public class UserService : IUserService
 
     public async Task Delete(Guid id)
     {
-        var userEntity = await _usersRepository.Query().FirstAsync(u => u.Id == id);
+        var userEntity = await _usersRepository.Get(id);
 
-        userEntity.State = await _usersStateRepository.Query().FirstAsync(u => u.Code == "Blocked");
+        userEntity.State = await _userStateRepository.GetState("Blocked");
         await Update(userEntity);
     }
 
     public async Task<User> Authenticate(string username, string password)
     {
-        return await _usersRepository.Query().SingleOrDefaultAsync(x => x.Login == username && x.Password == password);
+        return await _usersRepository.GetUser(username, password);
     }
 
     public async Task<UserPaginatedResponse> GetUsers(UserParametrs userParameters)
     {
-        return new UserPaginatedResponse()
-        {
-            TotalCount = await _usersRepository.Query().CountAsync(),
-            Users = await _usersRepository.Query()
-            .OrderBy(on => on.Login)
-            .Skip((userParameters.PageNumber - 1) * userParameters.PageSize)
-            .Take(userParameters.PageSize)
-            .Include(u => u.Group)
-            .Include(u => u.State)
-            .ToListAsync()
-        };
+        return await _usersRepository.GetUsers(userParameters);
     }
 }

@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using vk_test_api.Data.Models;
 using vk_test_api.Data.Repositories.Interfaces;
-using vk_test_api.Database;
 
 namespace vk_test_api.Data.Repositories.Implimentations;
 
 public class DatabaseInitializer : IDatabaseInitializer
 {
-    readonly UserContext _context;
+    readonly AppDbContext _context;
 
-    public DatabaseInitializer(UserContext context)
+    public DatabaseInitializer(AppDbContext context)
     {
         _context = context;
     }

@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using vk_test_api.Database;
+using vk_test_api.Data;
 using System.Text.Json.Serialization;
 using vk_test_api.Core.Services.Implimentations;
 using vk_test_api.Core.Services.Interfaces;
@@ -20,13 +20,17 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 
 var configuration = builder.Configuration;
 
-builder.Services.AddDbContext<UserContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 
 builder.Services.AddScoped<IBaseRepository<User>, BaseRepository<User>>();
 builder.Services.AddScoped<IBaseRepository<UserGroup>, BaseRepository<UserGroup>>();
 builder.Services.AddScoped<IBaseRepository<UserState>, BaseRepository<UserState>>();
-builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer> ();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserStateRepository, UserStateRepository>();
+builder.Services.AddScoped<IUserGroupRepository, UserGroupRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 

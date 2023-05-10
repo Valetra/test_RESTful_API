@@ -20,7 +20,9 @@ public class UsersController : ControllerBase
         _userService = userService;
     }
 
+
     [HttpGet]
+    //?pageNumber=x&pageSize=y for pagination
     public async Task<ActionResult<UserPaginatedResponse>> GetAll([FromQuery] UserParametrs userParametrs)
     {
         return Ok(await _userService.GetUsers(userParametrs));
@@ -30,13 +32,7 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<User>> GetUser(Guid id)
     {
         var user = await _userService.Get(id);
-
-        if (user == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(user);
+        return (user == null) ? Ok(user) : NotFound();
     }
 
     [AllowAnonymous]

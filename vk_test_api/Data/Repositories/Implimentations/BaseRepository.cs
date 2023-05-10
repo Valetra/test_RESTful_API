@@ -1,5 +1,5 @@
 ﻿using vk_test_api.Data.Models.Base;
-using vk_test_api.Database;
+using vk_test_api.Data;
 using vk_test_api.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using vk_test_api.Data.Models;
@@ -8,34 +8,35 @@ namespace vk_test_api.Data.Repositories.Implimentations;
 
 public class BaseRepository<TDbModel> : IBaseRepository<TDbModel> where TDbModel : BaseModel
 {
-    private UserContext Context { get; set; }
-    public BaseRepository(UserContext context)
+    protected AppDbContext Context { get; set; }
+    protected readonly DbSet<TDbModel> _entities;
+
+    public BaseRepository(AppDbContext context)
     {
         Context = context;
-    }
-
-    public async Task<TDbModel> Create(TDbModel model)
-    {
-        await Context.Set<TDbModel>().AddAsync(model);
-        await Context.SaveChangesAsync();
-        return model;
-    }
-
-    public async Task Delete(Guid id)
-    {
-        var toDelete = await Query().FirstOrDefaultAsync(m => m.Id == id);
-        Context.Set<TDbModel>().Remove(toDelete);
-        await Context.SaveChangesAsync();
+        _entities = Context.Set<TDbModel>();
     }
 
     public async Task<List<TDbModel>> GetAll()
     {
-        return await Query().ToListAsync();
+        return await _entities.ToListAsync();
+    }
+
+    public async Task<TDbModel> Get(Guid id)
+    {
+        return await _entities.FirstOrDefaultAsync(m => m.Id == id);
+    }
+
+    public async Task<TDbModel> Create(TDbModel model)
+    {
+        await _entities.AddAsync(model);
+        await Context.SaveChangesAsync();
+        return model;
     }
 
     public async Task<TDbModel> Update(TDbModel model)
     {
-        var toUpdate = await Query().FirstOrDefaultAsync(m => m.Id == model.Id);
+        var toUpdate = await _entities.FirstOrDefaultAsync(m => m.Id == model.Id);
         if (toUpdate != null)
         {
             toUpdate = model;
@@ -46,13 +47,10 @@ public class BaseRepository<TDbModel> : IBaseRepository<TDbModel> where TDbModel
         return toUpdate;
     }
 
-    public async Task<TDbModel> Get(Guid id)
+    public async Task Delete(Guid id)
     {
-        return await Query().FirstOrDefaultAsync(m => m.Id == id);
-    }
-
-    public IQueryable<TDbModel> Query()
-    {
-        return Context.Set<TDbModel>();
+        var toDelete = await _entities.FirstOrDefaultAsync(m => m.Id == id);
+        _entities.Remove(toDelete);
+        await Context.SaveChangesAsync();
     }
 }
