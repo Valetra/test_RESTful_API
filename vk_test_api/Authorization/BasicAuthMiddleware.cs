@@ -3,6 +3,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using vk_test_api.Core.Services.Interfaces;
+using vk_test_api.Core.Mapper;
 
 public class BasicAuthMiddleware
 {
@@ -21,7 +22,7 @@ public class BasicAuthMiddleware
             var credentialBytes = Convert.FromBase64String(authHeader.Parameter);
             var credentials = Encoding.UTF8.GetString(credentialBytes).Split(':', 2);
             var username = credentials[0];
-            var password = credentials[1];
+            var password = UserExtensions.ConvertPasswordToBase64(credentials[1]);
 
             // authenticate credentials with user service and attach user to http context
             context.Items["User"] = await userService.Authenticate(username, password);
